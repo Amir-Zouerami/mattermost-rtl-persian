@@ -1,7 +1,7 @@
 import styles from './styles.css?raw';
 import fontUrl from './fonts/IRANSansWeb.ttf?url';
 
-const PLUGIN_ID = 'ir.landin.mattermost-rtl';
+const PLUGIN_ID = 'dev.zouerami.mattermost-rtl-persian';
 const STYLE_ID = 'landin-rtl-styles';
 const STORAGE_PREFIX = 'landin-rtl-enabled';
 
