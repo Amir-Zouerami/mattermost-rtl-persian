@@ -26,6 +26,11 @@ const PERSIAN_RELATIVE_TIME_FORMATTER = new Intl.RelativeTimeFormat('fa-IR', {
 	style: 'long',
 });
 
+const ENGLISH_RELATIVE_TIME_FORMATTER = new Intl.RelativeTimeFormat('en', {
+	numeric: 'auto',
+	style: 'long',
+});
+
 const DIRECTION_TARGETS = [
 	'.post-message__text',
 	'#post_textbox',
@@ -73,7 +78,7 @@ function formatPersianDate(date: Date) {
 	return `${weekday} ${day} ${month} ${year}`;
 }
 
-function formatRelativeTime(date: Date) {
+function formatRelativeTime(date: Date, locale: 'fa' | 'en') {
 	const diffSeconds = Math.round((date.getTime() - Date.now()) / 1000);
 	const absSeconds = Math.abs(diffSeconds);
 
@@ -89,7 +94,10 @@ function formatRelativeTime(date: Date) {
 
 	const [unit, secondsInUnit] = divisions.find(([, seconds]) => absSeconds >= seconds) ?? ['second', 1];
 
-	return PERSIAN_RELATIVE_TIME_FORMATTER.format(Math.round(diffSeconds / secondsInUnit), unit);
+	const value = Math.round(diffSeconds / secondsInUnit);
+	const formatter = locale === 'fa' ? PERSIAN_RELATIVE_TIME_FORMATTER : ENGLISH_RELATIVE_TIME_FORMATTER;
+
+	return formatter.format(value, unit);
 }
 
 class Plugin {
@@ -225,11 +233,29 @@ class Plugin {
 	}
 
 	private localizeTimestamps() {
+		const showRelativeTime = true;
+
 		document
-			.querySelectorAll<HTMLTimeElement>(
-				'.post.landin-rtl-post .post__header > .badges-wrapper .post__permalink .post__time',
-			)
+			.querySelectorAll<HTMLTimeElement>('.post .post__header > .badges-wrapper .post__permalink .post__time')
 			.forEach(timeElement => {
+				const post = timeElement.closest<HTMLElement>('.post');
+
+				if (!post) {
+					return;
+				}
+
+				/**
+				 * Important:
+				 * same--root / same--user are grouped follow-up messages.
+				 * Mattermost may create/show their timestamp on hover.
+				 * Do not localize those, otherwise the hover timestamp gets huge
+				 * and can go out of view.
+				 */
+				if (post.classList.contains('same--root') || post.classList.contains('same--user')) {
+					this.restoreTimestamp(timeElement);
+					return;
+				}
+
 				const badgesWrapper = timeElement.closest('.badges-wrapper');
 
 				if (!badgesWrapper || !badgesWrapper.parentElement?.classList.contains('post__header')) {
@@ -248,33 +274,52 @@ class Plugin {
 					return;
 				}
 
-				const relativeTime = formatRelativeTime(date);
-				const persianTime = PERSIAN_TIME_FORMATTER.format(date);
-				const persianDate = formatPersianDate(date);
-
 				if (timeElement.dataset.landinRtlLocalized !== 'true') {
 					timeElement.dataset.landinRtlOriginalText = timeElement.textContent ?? '';
 					timeElement.dataset.landinRtlLocalized = 'true';
 				}
 
-				timeElement.textContent = `${relativeTime} - ${persianTime} - ${persianDate}`;
-				timeElement.setAttribute('dir', 'rtl');
+				const isRtlPost = post.classList.contains('landin-rtl-post');
+
+				if (isRtlPost) {
+					const persianTime = PERSIAN_TIME_FORMATTER.format(date);
+					const persianDate = formatPersianDate(date);
+
+					timeElement.textContent = showRelativeTime
+						? `${formatRelativeTime(date, 'fa')} - ${persianTime} - ${persianDate}`
+						: `${persianTime} - ${persianDate}`;
+
+					timeElement.setAttribute('dir', 'rtl');
+					return;
+				}
+
+				const originalText = timeElement.dataset.landinRtlOriginalText || timeElement.textContent || '';
+
+				timeElement.textContent = showRelativeTime
+					? `${formatRelativeTime(date, 'en')} - ${originalText}`
+					: originalText;
+
+				timeElement.setAttribute('dir', 'ltr');
 			});
+	}
+
+	private restoreTimestamp(timeElement: HTMLTimeElement) {
+		const originalText = timeElement.dataset.landinRtlOriginalText;
+
+		if (originalText) {
+			timeElement.textContent = originalText;
+		}
+
+		delete timeElement.dataset.landinRtlOriginalText;
+		delete timeElement.dataset.landinRtlLocalized;
+		timeElement.removeAttribute('dir');
 	}
 
 	private restoreTimestamps() {
 		document
 			.querySelectorAll<HTMLTimeElement>('.post__time[data-landin-rtl-localized="true"]')
 			.forEach(timeElement => {
-				const originalText = timeElement.dataset.landinRtlOriginalText;
-
-				if (originalText) {
-					timeElement.textContent = originalText;
-				}
-
-				delete timeElement.dataset.landinRtlOriginalText;
-				delete timeElement.dataset.landinRtlLocalized;
-				timeElement.removeAttribute('dir');
+				this.restoreTimestamp(timeElement);
 			});
 	}
 }
