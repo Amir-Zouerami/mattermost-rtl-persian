@@ -7,7 +7,7 @@
 	"scripts": {
 		"build": "vite build",
 		"dev": "vite build --watch",
-		"pack": "npm run build && rm -rf dist/plugin dist/landin-rtl.tar.gz && mkdir -p dist/plugin/webapp/dist && cp plugin.json dist/plugin/plugin.json && cp -R webapp/dist/* dist/plugin/webapp/dist/ && tar -czf dist/landin-rtl.tar.gz -C dist/plugin ."
+		"pack": "npm run build && rm -rf dist/plugin dist/mattermost-rtl-persian.tar.gz && mkdir -p dist/plugin/webapp/dist && cp plugin.json dist/plugin/plugin.json && cp -R webapp/dist/* dist/plugin/webapp/dist/ && tar -czf dist/mattermost-rtl-persian.tar.gz -C dist/plugin ."
 	},
 	"repository": {
 		"type": "git",

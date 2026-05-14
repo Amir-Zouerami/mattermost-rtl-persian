@@ -1,0 +1,20 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - "v*"
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        container:
+            image: node:24-alpine
+        steps:
+            - uses: actions/checkout@v4
+            - run: npm ci
+            - run: npm run pack
+            - uses: softprops/action-gh-release@v1
+              with:
+                  files: dist/mattermost-rtl-persian.tar.gz
+                  generate_release_notes: true
