@@ -38,7 +38,6 @@ Persian messages are aligned right, while technical content such as code blocks 
 |---|---|
 | Plugin name | Mattermost RTL Persian |
 | Package name | `mattermost-rtl-persian` |
-| Author | Amir Zouerami |
 | License | MIT |
 | Minimum Mattermost version | 11.0.0 |
 
