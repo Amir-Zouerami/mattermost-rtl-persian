@@ -1,0 +1,223 @@
+@font-face {
+	font-family: 'LandinRTLFont';
+	src: url('__LANDIN_RTL_FONT_URL__') format('truetype');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+body.landin-rtl-enabled {
+	--landin-rtl-font-family: 'LandinRTLFont', Tahoma, sans-serif;
+}
+
+body.landin-rtl-enabled div[role='list'].innerList {
+	width: 80% !important;
+	max-width: 1100px !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	padding: 14px 0 7px !important;
+	align-content: space-around !important;
+}
+
+@media (max-width: 1200px) {
+	body.landin-rtl-enabled div[role='list'].innerList {
+		width: 100% !important;
+		max-width: none !important;
+	}
+}
+
+body.landin-rtl-enabled .post-message__text,
+body.landin-rtl-enabled .post__permalink,
+body.landin-rtl-enabled .post__time,
+body.landin-rtl-enabled #post_textbox,
+body.landin-rtl-enabled #reply_textbox,
+body.landin-rtl-enabled #edit_textbox,
+body.landin-rtl-enabled.focalboard-body .Editable,
+body.landin-rtl-enabled.focalboard-body textarea,
+body.landin-rtl-enabled.focalboard-body input.Editable,
+body.landin-rtl-enabled.focalboard-body .MarkdownEditor,
+body.landin-rtl-enabled.focalboard-body .octo-editor-preview,
+body.landin-rtl-enabled.focalboard-body .comment-markdown {
+	font-family: var(--landin-rtl-font-family);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--landin-rtl-font-family) !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post {
+	direction: rtl !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post__img {
+	width: 42px !important;
+	padding-left: 10px !important;
+	padding-right: 0 !important;
+	text-align: right !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post__content > div:not(.post__img) {
+	min-width: 0 !important;
+	max-width: calc(100% - 42px) !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post__header {
+	direction: rtl !important;
+	text-align: right !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post__header .col__name,
+body.landin-rtl-enabled .post.landin-rtl-post .post-preview__header .col__name {
+	margin-left: 6px !important;
+	margin-right: 0 !important;
+	min-width: 0 !important;
+	flex: 0 auto !important;
+	gap: 8px !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post-menu {
+	direction: ltr !important;
+	left: 0 !important;
+	right: auto !important;
+}
+
+body.landin-rtl-enabled .post-message__text,
+body.landin-rtl-enabled .post-message__text p,
+body.landin-rtl-enabled .post-message__text li {
+	line-height: 2 !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text,
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text p,
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text li {
+	direction: rtl !important;
+	text-align: right !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-neutral-post .post-message__text,
+body.landin-rtl-enabled .post.landin-rtl-neutral-post .post-message__text p {
+	direction: ltr !important;
+	text-align: right !important;
+	unicode-bidi: isolate !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .mention-link,
+body.landin-rtl-enabled .post.landin-rtl-post .markdown__link {
+	unicode-bidi: isolate !important;
+}
+
+/* Restore only unordered Markdown bullets. Do not touch ordered lists. */
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul.markdown__list,
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul {
+	list-style-type: disc !important;
+	list-style-position: outside !important;
+	padding-right: 1.25em !important;
+	padding-left: 0 !important;
+	margin: 0.5em 0 !important;
+	direction: rtl !important;
+	text-align: right !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul.markdown__list > li,
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul > li {
+	display: list-item !important;
+	list-style-type: disc !important;
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+}
+
+/* Explicitly leave ordered lists to Mattermost. */
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ol,
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ol > li,
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ol > li::before {
+	list-style: revert;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post blockquote,
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__text blockquote {
+	border-left: 0 !important;
+	border-right: 2px solid rgba(var(--center-channel-color-rgb), 0.2) !important;
+	text-align: right !important;
+	direction: rtl !important;
+	unicode-bidi: plaintext !important;
+	padding-right: 12px !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .Reaction {
+	direction: ltr !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post pre,
+body.landin-rtl-enabled .post.landin-rtl-post code,
+body.landin-rtl-enabled .post.landin-rtl-post .post-code,
+body.landin-rtl-enabled .post.landin-rtl-post .hljs {
+	direction: ltr !important;
+	text-align: left !important;
+	unicode-bidi: isolate !important;
+	line-height: 1.45 !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post .post-message__attachments,
+body.landin-rtl-enabled .post.landin-rtl-post .file-view,
+body.landin-rtl-enabled .post.landin-rtl-post .file-view--single,
+body.landin-rtl-enabled .post.landin-rtl-post .post-image,
+body.landin-rtl-enabled .post.landin-rtl-post .attachment {
+	direction: ltr !important;
+	text-align: left !important;
+	margin-left: auto !important;
+	margin-right: 0 !important;
+	max-width: 100% !important;
+}
+
+body.landin-rtl-enabled .post.landin-rtl-post [data-testid='call-thread'] {
+	direction: ltr !important;
+	text-align: left !important;
+}
+
+body.landin-rtl-enabled #post_textbox,
+body.landin-rtl-enabled #reply_textbox,
+body.landin-rtl-enabled #edit_textbox {
+	unicode-bidi: plaintext;
+	text-align: start;
+	line-height: 2 !important;
+}
+
+body.landin-rtl-enabled.focalboard-body .Editable,
+body.landin-rtl-enabled.focalboard-body textarea,
+body.landin-rtl-enabled.focalboard-body input.Editable,
+body.landin-rtl-enabled.focalboard-body .octo-editor-preview,
+body.landin-rtl-enabled.focalboard-body .octo-editor-preview p,
+body.landin-rtl-enabled.focalboard-body .MarkdownEditor,
+body.landin-rtl-enabled.focalboard-body .comment-markdown,
+body.landin-rtl-enabled.focalboard-body .comment-markdown p {
+	unicode-bidi: plaintext;
+	text-align: start;
+	line-height: 2 !important;
+}
+
+body.landin-rtl-enabled.focalboard-body pre,
+body.landin-rtl-enabled.focalboard-body code {
+	direction: ltr !important;
+	text-align: left !important;
+	unicode-bidi: isolate !important;
+	line-height: 1.45 !important;
+}
+
+ol.markdown__list > li::before {
+	display: table-cell;
+	padding-right: 8px;
+	padding-left: 5px;
+	content: counter(list) '.';
+	text-align: right;
+	word-break: keep-all;
+}
+
+form#create_post {
+	max-width: 1200px;
+}

@@ -1,0 +1,32 @@
+{
+	"name": "mattermost-rtl-persian",
+	"author": "Amir Zouerami",
+	"version": "1.0.0",
+	"description": "Mattermost RTL plugin for Persian language support",
+	"license": "MIT",
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite build --watch",
+		"pack": "npm run build && rm -rf dist/plugin dist/landin-rtl.tar.gz && mkdir -p dist/plugin/webapp/dist && cp plugin.json dist/plugin/plugin.json && cp -R webapp/dist/* dist/plugin/webapp/dist/ && tar -czf dist/landin-rtl.tar.gz -C dist/plugin ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/amir-zouerami/mattermost-rtl-persian"
+	},
+	"keywords": [
+		"mattermost",
+		"rtl",
+		"persian",
+		"plugin",
+		"farsi"
+	],
+	"homepage": "https://github.com/amir-zouerami/mattermost-rtl-persian",
+	"bugs": {
+		"url": "https://github.com/amir-zouerami/mattermost-rtl-persian/issues"
+	},
+	"devDependencies": {
+		"@types/node": "^25.6.2",
+		"typescript": "^6.0.3",
+		"vite": "^8.0.11"
+	}
+}
