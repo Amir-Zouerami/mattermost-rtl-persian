@@ -1,12 +1,64 @@
 import styles from './styles.css?raw';
-import fontUrl from './fonts/IRANSansWeb.ttf?url';
+import fontUrl from './fonts/Vazirmatn-Variable.woff2?url';
 
 const PLUGIN_ID = 'dev.zouerami.mattermost-rtl-persian';
-const STYLE_ID = 'landin-rtl-styles';
-const STORAGE_PREFIX = 'landin-rtl-enabled';
+const STYLE_ID = 'mm-rtl-persian-styles';
+const STORAGE_PREFIX = 'mm-rtl-persian-enabled';
 
-const RTL_REGEX = /[\u0590-\u08FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+type TextDirection = 'rtl' | 'ltr' | 'neutral';
+
 const LETTER_REGEX = /\p{L}/u;
+const GENERATED_CLASS_NAMES = [
+	'mm-rtl-persian-post',
+	'mm-rtl-persian-ltr-post',
+	'mm-rtl-persian-persian-post',
+	'mm-rtl-persian-neutral-post',
+	'mm-rtl-persian-rtl-block',
+	'mm-rtl-persian-ltr-block',
+	'mm-rtl-persian-neutral-block',
+];
+
+const DIRECTION_CLASS_BY_DIRECTION: Record<TextDirection, string> = {
+	rtl: 'mm-rtl-persian-rtl-block',
+	ltr: 'mm-rtl-persian-ltr-block',
+	neutral: 'mm-rtl-persian-neutral-block',
+};
+
+const IGNORED_DIRECTION_SELECTOR = 'pre, code, kbd, samp, script, style';
+
+const DIRECTION_TARGETS = [
+	'.post-message__text',
+	'#post_textbox',
+	'#reply_textbox',
+	'#edit_textbox',
+
+	'.focalboard-body .Editable',
+	'.focalboard-body textarea',
+	'.focalboard-body input.Editable',
+	'.focalboard-body .octo-editor-preview',
+	'.focalboard-body .octo-editor-preview p',
+	'.focalboard-body .MarkdownEditor',
+	'.focalboard-body .comment-markdown',
+	'.focalboard-body .comment-markdown p',
+];
+
+const BLOCK_DIRECTION_TARGETS = [
+	'.post-message__text > h1',
+	'.post-message__text > h2',
+	'.post-message__text > h3',
+	'.post-message__text > h4',
+	'.post-message__text > h5',
+	'.post-message__text > h6',
+	'.post-message__text > p',
+	'.post-message__text > ul.markdown__list',
+	'.post-message__text > ol.markdown__list',
+	'.post-message__text li',
+	'.post-message__text blockquote',
+	'.post-message__text blockquote p',
+	'.post-message__text .table-responsive',
+	'.post-message__text .markdown__table th',
+	'.post-message__text .markdown__table td',
+];
 
 const PERSIAN_DATE_PARTS_FORMATTER = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
 	weekday: 'long',
@@ -30,22 +82,6 @@ const ENGLISH_RELATIVE_TIME_FORMATTER = new Intl.RelativeTimeFormat('en', {
 	numeric: 'auto',
 	style: 'long',
 });
-
-const DIRECTION_TARGETS = [
-	'.post-message__text',
-	'#post_textbox',
-	'#reply_textbox',
-	'#edit_textbox',
-
-	'.focalboard-body .Editable',
-	'.focalboard-body textarea',
-	'.focalboard-body input.Editable',
-	'.focalboard-body .octo-editor-preview',
-	'.focalboard-body .octo-editor-preview p',
-	'.focalboard-body .MarkdownEditor',
-	'.focalboard-body .comment-markdown',
-	'.focalboard-body .comment-markdown p',
-];
 
 declare global {
 	interface Window {
@@ -100,6 +136,124 @@ function formatRelativeTime(date: Date, locale: 'fa' | 'en') {
 	return formatter.format(value, unit);
 }
 
+function isArabicIndicDigit(codePoint: number) {
+	return (codePoint >= 0x0660 && codePoint <= 0x0669) || (codePoint >= 0x06F0 && codePoint <= 0x06F9);
+}
+
+function isRtlStrongCharacter(character: string) {
+	const codePoint = character.codePointAt(0);
+
+	if (codePoint === undefined || isArabicIndicDigit(codePoint)) {
+		return false;
+	}
+
+	return (
+		(codePoint >= 0x0590 && codePoint <= 0x05FF) ||
+		(codePoint >= 0x0600 && codePoint <= 0x06FF) ||
+		(codePoint >= 0x0750 && codePoint <= 0x077F) ||
+		(codePoint >= 0x08A0 && codePoint <= 0x08FF) ||
+		(codePoint >= 0xFB1D && codePoint <= 0xFDFD) ||
+		(codePoint >= 0xFE70 && codePoint <= 0xFEFC)
+	);
+}
+
+function getStrongTextStats(text: string) {
+	let rtl = 0;
+	let ltr = 0;
+	let firstDirection: TextDirection = 'neutral';
+
+	for (const character of text) {
+		if (isRtlStrongCharacter(character)) {
+			rtl += 1;
+			firstDirection = firstDirection === 'neutral' ? 'rtl' : firstDirection;
+			continue;
+		}
+
+		if (LETTER_REGEX.test(character)) {
+			ltr += 1;
+			firstDirection = firstDirection === 'neutral' ? 'ltr' : firstDirection;
+		}
+	}
+
+	return {rtl, ltr, firstDirection};
+}
+
+function startsWithShortTechnicalLtrTokenFollowedByRtl(text: string) {
+	const match = /^[\s`*_~>\-•()[\]{}'"“”‘’.,:;!?]*[A-Za-z][A-Za-z0-9_.#/+:-]{0,5}\s+/u.exec(text);
+
+	if (!match) {
+		return false;
+	}
+
+	return hasRtlStrongText(text.slice(match[0].length));
+}
+
+function getTextDirection(text: string): TextDirection {
+	const stats = getStrongTextStats(text);
+
+	if (stats.firstDirection === 'neutral') {
+		return 'neutral';
+	}
+
+	if (
+		stats.firstDirection === 'ltr' &&
+		stats.rtl > stats.ltr &&
+		startsWithShortTechnicalLtrTokenFollowedByRtl(text)
+	) {
+		return 'rtl';
+	}
+
+	return stats.firstDirection;
+}
+
+function hasRtlStrongText(text: string) {
+	return getStrongTextStats(text).rtl > 0;
+}
+
+function hasLetter(text: string) {
+	return LETTER_REGEX.test(text);
+}
+
+function getDirectionalText(element: HTMLElement) {
+	let text = '';
+	const walker = document.createTreeWalker(
+		element,
+		NodeFilter.SHOW_TEXT,
+		{
+			acceptNode(node) {
+				const parent = node.parentElement;
+
+				if (parent?.closest(IGNORED_DIRECTION_SELECTOR)) {
+					return NodeFilter.FILTER_REJECT;
+				}
+
+				return NodeFilter.FILTER_ACCEPT;
+			},
+		},
+	);
+
+	let node = walker.nextNode();
+
+	while (node) {
+		text += `${node.textContent ?? ''} `;
+		node = walker.nextNode();
+	}
+
+	return text.replace(/\s+/g, ' ').trim();
+}
+
+function setDirectionalClass(element: HTMLElement, direction: TextDirection) {
+	element.classList.remove('mm-rtl-persian-rtl-block', 'mm-rtl-persian-ltr-block', 'mm-rtl-persian-neutral-block');
+	element.classList.add(DIRECTION_CLASS_BY_DIRECTION[direction]);
+
+	if (direction === 'neutral') {
+		element.removeAttribute('dir');
+		return;
+	}
+
+	element.setAttribute('dir', direction);
+}
+
 class Plugin {
 	private observer?: MutationObserver;
 	private relativeTimeInterval?: number;
@@ -112,7 +266,7 @@ class Plugin {
 
 		this.injectStyles();
 
-		registry?.registerMainMenuAction?.('Toggle Landin RTL', () => {
+		registry?.registerMainMenuAction?.('Toggle Persian RTL', () => {
 			this.setEnabled(!this.isEnabled());
 		});
 
@@ -136,13 +290,10 @@ class Plugin {
 			this.relativeTimeInterval = undefined;
 		}
 
-		document.body.classList.remove('landin-rtl-enabled');
+		document.body.classList.remove('mm-rtl-persian-enabled');
 		document.getElementById(STYLE_ID)?.remove();
 		this.restoreTimestamps();
-
-		document.querySelectorAll('.landin-rtl-post, .landin-rtl-neutral-post').forEach(element => {
-			element.classList.remove('landin-rtl-post', 'landin-rtl-neutral-post');
-		});
+		this.removeGeneratedClasses();
 	}
 
 	private injectStyles() {
@@ -152,7 +303,7 @@ class Plugin {
 
 		const style = document.createElement('style');
 		style.id = STYLE_ID;
-		style.textContent = styles.replaceAll('__LANDIN_RTL_FONT_URL__', fontUrl);
+		style.textContent = styles.replaceAll('__MM_RTL_PERSIAN_FONT_URL__', fontUrl);
 		document.head.appendChild(style);
 	}
 
@@ -162,7 +313,7 @@ class Plugin {
 
 	private setEnabled(enabled: boolean) {
 		localStorage.setItem(this.storageKey, String(enabled));
-		document.body.classList.toggle('landin-rtl-enabled', enabled);
+		document.body.classList.toggle('mm-rtl-persian-enabled', enabled);
 
 		if (enabled) {
 			if (!this.relativeTimeInterval) {
@@ -181,10 +332,7 @@ class Plugin {
 		}
 
 		this.restoreTimestamps();
-
-		document.querySelectorAll('.landin-rtl-post, .landin-rtl-neutral-post').forEach(element => {
-			element.classList.remove('landin-rtl-post', 'landin-rtl-neutral-post');
-		});
+		this.removeGeneratedClasses();
 	}
 
 	private scheduleApply() {
@@ -203,6 +351,7 @@ class Plugin {
 	private apply() {
 		this.applyDirectionAttributes(document.body);
 		this.classifyPosts();
+		this.classifyDirectionalBlocks();
 		this.localizeTimestamps();
 	}
 
@@ -217,18 +366,30 @@ class Plugin {
 	private classifyPosts() {
 		document.querySelectorAll<HTMLElement>('.post').forEach(post => {
 			const messageText = post.querySelector<HTMLElement>('.post-message__text');
-			const trimmedText = messageText?.textContent?.trim() ?? '';
+			const trimmedText = getDirectionalText(messageText ?? post);
 
 			if (!trimmedText) {
-				post.classList.remove('landin-rtl-post', 'landin-rtl-neutral-post');
+				post.classList.remove('mm-rtl-persian-post', 'mm-rtl-persian-ltr-post', 'mm-rtl-persian-persian-post', 'mm-rtl-persian-neutral-post');
 				return;
 			}
 
-			const isRtl = RTL_REGEX.test(trimmedText);
-			const isNeutral = !isRtl && !LETTER_REGEX.test(trimmedText);
+			const direction = getTextDirection(trimmedText);
+			const hasRtl = hasRtlStrongText(trimmedText);
+			const isNeutral = !hasRtl && !hasLetter(trimmedText);
 
-			post.classList.toggle('landin-rtl-post', isRtl || isNeutral);
-			post.classList.toggle('landin-rtl-neutral-post', isNeutral);
+			post.classList.toggle('mm-rtl-persian-post', direction === 'rtl' || isNeutral);
+			post.classList.toggle('mm-rtl-persian-ltr-post', direction === 'ltr');
+			post.classList.toggle('mm-rtl-persian-persian-post', hasRtl);
+			post.classList.toggle('mm-rtl-persian-neutral-post', isNeutral);
+		});
+	}
+
+	private classifyDirectionalBlocks() {
+		document.querySelectorAll<HTMLElement>(BLOCK_DIRECTION_TARGETS.join(',')).forEach(element => {
+			const trimmedText = getDirectionalText(element);
+			const direction = getTextDirection(trimmedText);
+
+			setDirectionalClass(element, direction);
 		});
 	}
 
@@ -274,14 +435,14 @@ class Plugin {
 					return;
 				}
 
-				if (timeElement.dataset.landinRtlLocalized !== 'true') {
-					timeElement.dataset.landinRtlOriginalText = timeElement.textContent ?? '';
-					timeElement.dataset.landinRtlLocalized = 'true';
+				if (timeElement.dataset.mmRtlPersianLocalized !== 'true') {
+					timeElement.dataset.mmRtlPersianOriginalText = timeElement.textContent ?? '';
+					timeElement.dataset.mmRtlPersianLocalized = 'true';
 				}
 
-				const isRtlPost = post.classList.contains('landin-rtl-post');
+				const shouldUsePersianTime = post.classList.contains('mm-rtl-persian-persian-post') || post.classList.contains('mm-rtl-persian-post');
 
-				if (isRtlPost) {
+				if (shouldUsePersianTime) {
 					const persianTime = PERSIAN_TIME_FORMATTER.format(date);
 					const persianDate = formatPersianDate(date);
 
@@ -293,7 +454,7 @@ class Plugin {
 					return;
 				}
 
-				const originalText = timeElement.dataset.landinRtlOriginalText || timeElement.textContent || '';
+				const originalText = timeElement.dataset.mmRtlPersianOriginalText || timeElement.textContent || '';
 
 				timeElement.textContent = showRelativeTime
 					? `${formatRelativeTime(date, 'en')} - ${originalText}`
@@ -304,23 +465,29 @@ class Plugin {
 	}
 
 	private restoreTimestamp(timeElement: HTMLTimeElement) {
-		const originalText = timeElement.dataset.landinRtlOriginalText;
+		const originalText = timeElement.dataset.mmRtlPersianOriginalText;
 
 		if (originalText) {
 			timeElement.textContent = originalText;
 		}
 
-		delete timeElement.dataset.landinRtlOriginalText;
-		delete timeElement.dataset.landinRtlLocalized;
+		delete timeElement.dataset.mmRtlPersianOriginalText;
+		delete timeElement.dataset.mmRtlPersianLocalized;
 		timeElement.removeAttribute('dir');
 	}
 
 	private restoreTimestamps() {
 		document
-			.querySelectorAll<HTMLTimeElement>('.post__time[data-landin-rtl-localized="true"]')
+			.querySelectorAll<HTMLTimeElement>('.post__time[data-mm-rtl-persian-localized="true"]')
 			.forEach(timeElement => {
 				this.restoreTimestamp(timeElement);
 			});
+	}
+
+	private removeGeneratedClasses() {
+		document.querySelectorAll<HTMLElement>(GENERATED_CLASS_NAMES.map(className => `.${className}`).join(',')).forEach(element => {
+			element.classList.remove(...GENERATED_CLASS_NAMES);
+		});
 	}
 }
 

@@ -1,16 +1,16 @@
 @font-face {
-	font-family: 'LandinRTLFont';
-	src: url('__LANDIN_RTL_FONT_URL__') format('truetype');
+	font-family: 'MattermostPersianRTLFont';
+	src: url('__MM_RTL_PERSIAN_FONT_URL__') format('woff2');
 	font-weight: 100 900;
 	font-style: normal;
 	font-display: swap;
 }
 
-body.landin-rtl-enabled {
-	--landin-rtl-font-family: 'LandinRTLFont', Tahoma, sans-serif;
+body.mm-rtl-persian-enabled {
+	--mm-rtl-persian-font-family: 'MattermostPersianRTLFont', Tahoma, sans-serif;
 }
 
-body.landin-rtl-enabled div[role='list'].innerList {
+body.mm-rtl-persian-enabled div[role='list'].innerList {
 	width: 80% !important;
 	max-width: 1100px !important;
 	margin-left: auto !important;
@@ -20,59 +20,75 @@ body.landin-rtl-enabled div[role='list'].innerList {
 }
 
 @media (max-width: 1200px) {
-	body.landin-rtl-enabled div[role='list'].innerList {
+	body.mm-rtl-persian-enabled div[role='list'].innerList {
 		width: 100% !important;
 		max-width: none !important;
 	}
 }
 
-body.landin-rtl-enabled .post-message__text,
-body.landin-rtl-enabled .post__permalink,
-body.landin-rtl-enabled .post__time,
-body.landin-rtl-enabled #post_textbox,
-body.landin-rtl-enabled #reply_textbox,
-body.landin-rtl-enabled #edit_textbox,
-body.landin-rtl-enabled.focalboard-body .Editable,
-body.landin-rtl-enabled.focalboard-body textarea,
-body.landin-rtl-enabled.focalboard-body input.Editable,
-body.landin-rtl-enabled.focalboard-body .MarkdownEditor,
-body.landin-rtl-enabled.focalboard-body .octo-editor-preview,
-body.landin-rtl-enabled.focalboard-body .comment-markdown {
-	font-family: var(--landin-rtl-font-family);
+body.mm-rtl-persian-enabled .post-message__text,
+body.mm-rtl-persian-enabled .post__permalink,
+body.mm-rtl-persian-enabled .post__time,
+body.mm-rtl-persian-enabled #post_textbox,
+body.mm-rtl-persian-enabled #reply_textbox,
+body.mm-rtl-persian-enabled #edit_textbox,
+body.mm-rtl-persian-enabled.focalboard-body .Editable,
+body.mm-rtl-persian-enabled.focalboard-body textarea,
+body.mm-rtl-persian-enabled.focalboard-body input.Editable,
+body.mm-rtl-persian-enabled.focalboard-body .MarkdownEditor,
+body.mm-rtl-persian-enabled.focalboard-body .octo-editor-preview,
+body.mm-rtl-persian-enabled.focalboard-body .comment-markdown {
+	font-family: var(--mm-rtl-persian-font-family);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	font-family: var(--landin-rtl-font-family) !important;
+body.mm-rtl-persian-enabled .post-message__text h1,
+body.mm-rtl-persian-enabled .post-message__text h2,
+body.mm-rtl-persian-enabled .post-message__text h3,
+body.mm-rtl-persian-enabled .post-message__text h4,
+body.mm-rtl-persian-enabled .post-message__text h5,
+body.mm-rtl-persian-enabled .post-message__text h6,
+body.mm-rtl-persian-enabled .markdown__heading {
+	font-family: var(--mm-rtl-persian-font-family) !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post {
+body.mm-rtl-persian-enabled .post-message__text h1.markdown__heading {
+	font-weight: 800 !important;
+}
+
+body.mm-rtl-persian-enabled .post-message__text h2.markdown__heading,
+body.mm-rtl-persian-enabled .post-message__text h3.markdown__heading {
+	font-weight: 750 !important;
+}
+
+body.mm-rtl-persian-enabled .post-message__text h4.markdown__heading,
+body.mm-rtl-persian-enabled .post-message__text h5.markdown__heading,
+body.mm-rtl-persian-enabled .post-message__text h6.markdown__heading {
+	font-weight: 700 !important;
+}
+
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post {
 	direction: rtl !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post__img {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post__img {
 	width: 42px !important;
 	padding-left: 10px !important;
 	padding-right: 0 !important;
 	text-align: right !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post__content > div:not(.post__img) {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post__content > div:not(.post__img) {
 	min-width: 0 !important;
 	max-width: calc(100% - 42px) !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post__header {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post__header {
 	direction: rtl !important;
 	text-align: right !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post__header .col__name,
-body.landin-rtl-enabled .post.landin-rtl-post .post-preview__header .col__name {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post__header .col__name,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-preview__header .col__name {
 	margin-left: 6px !important;
 	margin-right: 0 !important;
 	min-width: 0 !important;
@@ -80,41 +96,83 @@ body.landin-rtl-enabled .post.landin-rtl-post .post-preview__header .col__name {
 	gap: 8px !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post-menu {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-menu {
 	direction: ltr !important;
 	left: 0 !important;
 	right: auto !important;
 }
 
-body.landin-rtl-enabled .post-message__text,
-body.landin-rtl-enabled .post-message__text p,
-body.landin-rtl-enabled .post-message__text li {
+body.mm-rtl-persian-enabled .post-message__text,
+body.mm-rtl-persian-enabled .post-message__text p,
+body.mm-rtl-persian-enabled .post-message__text li {
 	line-height: 2 !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text,
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text p,
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text li {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text p,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text li {
 	direction: rtl !important;
 	text-align: right !important;
 	unicode-bidi: plaintext !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-neutral-post .post-message__text,
-body.landin-rtl-enabled .post.landin-rtl-neutral-post .post-message__text p {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-neutral-post .post-message__text,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-neutral-post .post-message__text p {
 	direction: ltr !important;
 	text-align: right !important;
 	unicode-bidi: isolate !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .mention-link,
-body.landin-rtl-enabled .post.landin-rtl-post .markdown__link {
+body.mm-rtl-persian-enabled .post .post-message__text .mm-rtl-persian-rtl-block,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-ltr-post .post-message__text .mm-rtl-persian-rtl-block {
+	direction: rtl !important;
+	text-align: right !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text .mm-rtl-persian-ltr-block,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text .mm-rtl-persian-ltr-block {
+	direction: ltr !important;
+	text-align: left !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text .mm-rtl-persian-neutral-block {
+	unicode-bidi: isolate !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text .table-responsive.mm-rtl-persian-rtl-block {
+	direction: rtl !important;
+	text-align: right !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text .table-responsive.mm-rtl-persian-ltr-block {
+	direction: ltr !important;
+	text-align: left !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text .markdown__table th.mm-rtl-persian-rtl-block,
+body.mm-rtl-persian-enabled .post .post-message__text .markdown__table td.mm-rtl-persian-rtl-block {
+	direction: rtl !important;
+	text-align: right !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text .markdown__table th.mm-rtl-persian-ltr-block,
+body.mm-rtl-persian-enabled .post .post-message__text .markdown__table td.mm-rtl-persian-ltr-block {
+	direction: ltr !important;
+	text-align: left !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .mention-link,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .markdown__link {
 	unicode-bidi: isolate !important;
 }
 
 /* Restore only unordered Markdown bullets. Do not touch ordered lists. */
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul.markdown__list,
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ul.markdown__list,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ul {
 	list-style-type: disc !important;
 	list-style-position: outside !important;
 	padding-right: 1.25em !important;
@@ -124,8 +182,40 @@ body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul {
 	text-align: right !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul.markdown__list > li,
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul > li {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ul.markdown__list > li,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ul > li {
+	display: list-item !important;
+	list-style-type: disc !important;
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ul.markdown__list.mm-rtl-persian-rtl-block,
+body.mm-rtl-persian-enabled .post .post-message__text ul.mm-rtl-persian-rtl-block {
+	list-style-type: disc !important;
+	list-style-position: outside !important;
+	padding-right: 1.25em !important;
+	padding-left: 0 !important;
+	margin: 0.5em 0 !important;
+	direction: rtl !important;
+	text-align: right !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ul.markdown__list.mm-rtl-persian-ltr-block,
+body.mm-rtl-persian-enabled .post .post-message__text ul.mm-rtl-persian-ltr-block {
+	list-style-type: disc !important;
+	list-style-position: outside !important;
+	padding-left: 1.25em !important;
+	padding-right: 0 !important;
+	margin: 0.5em 0 !important;
+	direction: ltr !important;
+	text-align: left !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ul.markdown__list.mm-rtl-persian-rtl-block > li,
+body.mm-rtl-persian-enabled .post .post-message__text ul.mm-rtl-persian-rtl-block > li,
+body.mm-rtl-persian-enabled .post .post-message__text ul.markdown__list.mm-rtl-persian-ltr-block > li,
+body.mm-rtl-persian-enabled .post .post-message__text ul.mm-rtl-persian-ltr-block > li {
 	display: list-item !important;
 	list-style-type: disc !important;
 	padding-right: 0 !important;
@@ -133,14 +223,14 @@ body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ul > li {
 }
 
 /* Explicitly leave ordered lists to Mattermost. */
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ol,
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ol > li,
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text ol > li::before {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ol,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ol > li,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ol > li::before {
 	list-style: revert;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post blockquote,
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__text blockquote {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post blockquote,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text blockquote {
 	border-left: 0 !important;
 	border-right: 2px solid rgba(var(--center-channel-color-rgb), 0.2) !important;
 	text-align: right !important;
@@ -149,25 +239,45 @@ body.landin-rtl-enabled .post.landin-rtl-post .post-message__text blockquote {
 	padding-right: 12px !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .Reaction {
+body.mm-rtl-persian-enabled .post .post-message__text blockquote.mm-rtl-persian-rtl-block {
+	border-left: 0 !important;
+	border-right: 2px solid rgba(var(--center-channel-color-rgb), 0.2) !important;
+	padding-right: 12px !important;
+	padding-left: 0 !important;
+	text-align: right !important;
+	direction: rtl !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text blockquote.mm-rtl-persian-ltr-block {
+	border-right: 0 !important;
+	border-left: 2px solid rgba(var(--center-channel-color-rgb), 0.2) !important;
+	padding-left: 12px !important;
+	padding-right: 0 !important;
+	text-align: left !important;
+	direction: ltr !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .Reaction {
 	direction: ltr !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post pre,
-body.landin-rtl-enabled .post.landin-rtl-post code,
-body.landin-rtl-enabled .post.landin-rtl-post .post-code,
-body.landin-rtl-enabled .post.landin-rtl-post .hljs {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post pre,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post code,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-code,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .hljs {
 	direction: ltr !important;
 	text-align: left !important;
 	unicode-bidi: isolate !important;
 	line-height: 1.45 !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post .post-message__attachments,
-body.landin-rtl-enabled .post.landin-rtl-post .file-view,
-body.landin-rtl-enabled .post.landin-rtl-post .file-view--single,
-body.landin-rtl-enabled .post.landin-rtl-post .post-image,
-body.landin-rtl-enabled .post.landin-rtl-post .attachment {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__attachments,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .file-view,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .file-view--single,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-image,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .attachment {
 	direction: ltr !important;
 	text-align: left !important;
 	margin-left: auto !important;
@@ -175,34 +285,34 @@ body.landin-rtl-enabled .post.landin-rtl-post .attachment {
 	max-width: 100% !important;
 }
 
-body.landin-rtl-enabled .post.landin-rtl-post [data-testid='call-thread'] {
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post [data-testid='call-thread'] {
 	direction: ltr !important;
 	text-align: left !important;
 }
 
-body.landin-rtl-enabled #post_textbox,
-body.landin-rtl-enabled #reply_textbox,
-body.landin-rtl-enabled #edit_textbox {
+body.mm-rtl-persian-enabled #post_textbox,
+body.mm-rtl-persian-enabled #reply_textbox,
+body.mm-rtl-persian-enabled #edit_textbox {
 	unicode-bidi: plaintext;
 	text-align: start;
 	line-height: 2 !important;
 }
 
-body.landin-rtl-enabled.focalboard-body .Editable,
-body.landin-rtl-enabled.focalboard-body textarea,
-body.landin-rtl-enabled.focalboard-body input.Editable,
-body.landin-rtl-enabled.focalboard-body .octo-editor-preview,
-body.landin-rtl-enabled.focalboard-body .octo-editor-preview p,
-body.landin-rtl-enabled.focalboard-body .MarkdownEditor,
-body.landin-rtl-enabled.focalboard-body .comment-markdown,
-body.landin-rtl-enabled.focalboard-body .comment-markdown p {
+body.mm-rtl-persian-enabled.focalboard-body .Editable,
+body.mm-rtl-persian-enabled.focalboard-body textarea,
+body.mm-rtl-persian-enabled.focalboard-body input.Editable,
+body.mm-rtl-persian-enabled.focalboard-body .octo-editor-preview,
+body.mm-rtl-persian-enabled.focalboard-body .octo-editor-preview p,
+body.mm-rtl-persian-enabled.focalboard-body .MarkdownEditor,
+body.mm-rtl-persian-enabled.focalboard-body .comment-markdown,
+body.mm-rtl-persian-enabled.focalboard-body .comment-markdown p {
 	unicode-bidi: plaintext;
 	text-align: start;
 	line-height: 2 !important;
 }
 
-body.landin-rtl-enabled.focalboard-body pre,
-body.landin-rtl-enabled.focalboard-body code {
+body.mm-rtl-persian-enabled.focalboard-body pre,
+body.mm-rtl-persian-enabled.focalboard-body code {
 	direction: ltr !important;
 	text-align: left !important;
 	unicode-bidi: isolate !important;

@@ -34,12 +34,12 @@ Persian messages are aligned right, while technical content such as code blocks 
 
 ## 📦 Plugin Info
 
-| Field | Value |
-|---|---|
-| Plugin name | Mattermost RTL Persian |
-| Package name | `mattermost-rtl-persian` |
-| License | MIT |
-| Minimum Mattermost version | 11.0.0 |
+| Field                      | Value                    |
+| -------------------------- | ------------------------ |
+| Plugin name                | Mattermost RTL Persian   |
+| Package name               | `mattermost-rtl-persian` |
+| License                    | MIT                      |
+| Minimum Mattermost version | 11.0.0                   |
 
 ---
 
@@ -69,7 +69,7 @@ npm run pack
 This creates:
 
 ```text
-dist/landin-rtl.tar.gz
+dist/mattermost-rtl-persian.tar.gz
 ```
 
 ---
@@ -78,7 +78,7 @@ dist/landin-rtl.tar.gz
 
 1. Go to **System Console**
 2. Open **Plugin Management**
-3. Upload `dist/landin-rtl.tar.gz`
+3. Upload `dist/mattermost-rtl-persian.tar.gz`
 4. Enable the plugin
 
 ---
@@ -89,7 +89,7 @@ After installing and enabling the plugin:
 
 1. Open Mattermost
 2. Open the main menu
-3. Click **Toggle Landin RTL**
+3. Click **Toggle Persian RTL**
 4. RTL support will be enabled or disabled for your user account
 
 The setting is saved per user in browser local storage.
@@ -131,7 +131,7 @@ npm run pack
         ├── index.ts
         ├── styles.css
         └── fonts
-            └── IRANSansWeb.ttf
+            └── Vazirmatn-Variable.woff2
 ```
 
 ---

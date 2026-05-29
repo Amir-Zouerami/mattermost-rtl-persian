@@ -2,7 +2,7 @@
 	"id": "dev.zouerami.mattermost-rtl-persian",
 	"name": "Mattermost RTL Persian",
 	"description": "Opinionated per-user RTL support for Mattermost messages, composer, and Boards.",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"min_server_version": "11.0.0",
 	"webapp": {
 		"bundle_path": "webapp/dist/main.js"
