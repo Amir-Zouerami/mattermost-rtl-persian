@@ -24,6 +24,13 @@ const DIRECTION_CLASS_BY_DIRECTION: Record<TextDirection, string> = {
 	neutral: 'mm-rtl-persian-neutral-block',
 };
 
+type DirectionCacheEntry = {
+	text: string;
+	direction: TextDirection;
+};
+
+const directionCache = new WeakMap<HTMLElement, DirectionCacheEntry>();
+
 const IGNORED_DIRECTION_SELECTOR = 'pre, code, kbd, samp, script, style';
 
 const DIRECTION_TARGETS = [
@@ -178,14 +185,29 @@ function getStrongTextStats(text: string) {
 	return {rtl, ltr, firstDirection};
 }
 
+function stripLeadingDirectionalNoise(text: string) {
+	let startIndex = 0;
+
+	for (const character of text) {
+		if (isRtlStrongCharacter(character) || LETTER_REGEX.test(character)) {
+			break;
+		}
+
+		startIndex += character.length;
+	}
+
+	return text.slice(startIndex);
+}
+
 function startsWithShortTechnicalLtrTokenFollowedByRtl(text: string) {
-	const match = /^[\s`*_~>\-•()[\]{}'"“”‘’.,:;!?]*[A-Za-z][A-Za-z0-9_.#/+:-]{0,5}\s+/u.exec(text);
+	const normalizedText = stripLeadingDirectionalNoise(text);
+	const match = /^[A-Za-z][A-Za-z0-9_.#/+:-]{0,5}\s+/u.exec(normalizedText);
 
 	if (!match) {
 		return false;
 	}
 
-	return hasRtlStrongText(text.slice(match[0].length));
+	return hasRtlStrongText(normalizedText.slice(match[0].length));
 }
 
 function getTextDirection(text: string): TextDirection {
@@ -242,16 +264,69 @@ function getDirectionalText(element: HTMLElement) {
 	return text.replace(/\s+/g, ' ').trim();
 }
 
-function setDirectionalClass(element: HTMLElement, direction: TextDirection) {
-	element.classList.remove('mm-rtl-persian-rtl-block', 'mm-rtl-persian-ltr-block', 'mm-rtl-persian-neutral-block');
-	element.classList.add(DIRECTION_CLASS_BY_DIRECTION[direction]);
+function addClassIfMissing(element: HTMLElement, className: string) {
+	if (!element.classList.contains(className)) {
+		element.classList.add(className);
+	}
+}
 
+function removeClassIfPresent(element: HTMLElement, className: string) {
+	if (element.classList.contains(className)) {
+		element.classList.remove(className);
+	}
+}
+
+function setAttributeIfChanged(element: HTMLElement, name: string, value: string) {
+	if (element.getAttribute(name) !== value) {
+		element.setAttribute(name, value);
+	}
+}
+
+function removeAttributeIfPresent(element: HTMLElement, name: string) {
+	if (element.hasAttribute(name)) {
+		element.removeAttribute(name);
+	}
+}
+
+function setTextContentIfChanged(element: HTMLElement, text: string) {
+	if ((element.textContent ?? '') !== text) {
+		element.textContent = text;
+	}
+}
+
+function hasExpectedDirectionalState(element: HTMLElement, direction: TextDirection) {
 	if (direction === 'neutral') {
-		element.removeAttribute('dir');
+		return !element.classList.contains('mm-rtl-persian-rtl-block') &&
+			!element.classList.contains('mm-rtl-persian-ltr-block') &&
+			!element.classList.contains('mm-rtl-persian-neutral-block') &&
+			!element.hasAttribute('dir');
+	}
+
+	const expectedClassName = DIRECTION_CLASS_BY_DIRECTION[direction];
+	const unexpectedClassName = direction === 'rtl' ? 'mm-rtl-persian-ltr-block' : 'mm-rtl-persian-rtl-block';
+
+	return element.classList.contains(expectedClassName) &&
+		!element.classList.contains(unexpectedClassName) &&
+		!element.classList.contains('mm-rtl-persian-neutral-block') &&
+		element.getAttribute('dir') === direction;
+}
+
+function setDirectionalClass(element: HTMLElement, direction: TextDirection) {
+	if (direction === 'neutral') {
+		removeClassIfPresent(element, 'mm-rtl-persian-rtl-block');
+		removeClassIfPresent(element, 'mm-rtl-persian-ltr-block');
+		removeClassIfPresent(element, 'mm-rtl-persian-neutral-block');
+		removeAttributeIfPresent(element, 'dir');
 		return;
 	}
 
-	element.setAttribute('dir', direction);
+	const expectedClassName = DIRECTION_CLASS_BY_DIRECTION[direction];
+	const unexpectedClassName = direction === 'rtl' ? 'mm-rtl-persian-ltr-block' : 'mm-rtl-persian-rtl-block';
+
+	removeClassIfPresent(element, unexpectedClassName);
+	removeClassIfPresent(element, 'mm-rtl-persian-neutral-block');
+	addClassIfMissing(element, expectedClassName);
+	setAttributeIfChanged(element, 'dir', direction);
 }
 
 class Plugin {
@@ -272,8 +347,10 @@ class Plugin {
 
 		this.setEnabled(this.isEnabled());
 
-		this.observer = new MutationObserver(() => {
-			this.scheduleApply();
+		this.observer = new MutationObserver(records => {
+			if (records.some(record => this.shouldReactToMutation(record))) {
+				this.scheduleApply();
+			}
 		});
 
 		this.observer.observe(document.body, {
@@ -335,6 +412,20 @@ class Plugin {
 		this.removeGeneratedClasses();
 	}
 
+	private shouldReactToMutation(record: MutationRecord) {
+		if (record.type !== 'childList') {
+			return false;
+		}
+
+		const targetElement = record.target instanceof HTMLElement ? record.target : record.target.parentElement;
+
+		if (targetElement?.closest('.post__time[data-mm-rtl-persian-localized="true"]')) {
+			return false;
+		}
+
+		return true;
+	}
+
 	private scheduleApply() {
 		if (this.scheduled || !this.isEnabled()) {
 			return;
@@ -388,7 +479,13 @@ class Plugin {
 		document.querySelectorAll<HTMLElement>(BLOCK_DIRECTION_TARGETS.join(',')).forEach(element => {
 			const trimmedText = getDirectionalText(element);
 			const direction = getTextDirection(trimmedText);
+			const cached = directionCache.get(element);
 
+			if (cached?.text === trimmedText && cached.direction === direction && hasExpectedDirectionalState(element, direction)) {
+				return;
+			}
+
+			directionCache.set(element, {text: trimmedText, direction});
 			setDirectionalClass(element, direction);
 		});
 	}
@@ -446,21 +543,23 @@ class Plugin {
 					const persianTime = PERSIAN_TIME_FORMATTER.format(date);
 					const persianDate = formatPersianDate(date);
 
-					timeElement.textContent = showRelativeTime
+					const localizedText = showRelativeTime
 						? `${formatRelativeTime(date, 'fa')} - ${persianTime} - ${persianDate}`
 						: `${persianTime} - ${persianDate}`;
 
-					timeElement.setAttribute('dir', 'rtl');
+					setTextContentIfChanged(timeElement, localizedText);
+					setAttributeIfChanged(timeElement, 'dir', 'rtl');
 					return;
 				}
 
 				const originalText = timeElement.dataset.mmRtlPersianOriginalText || timeElement.textContent || '';
 
-				timeElement.textContent = showRelativeTime
+				const localizedText = showRelativeTime
 					? `${formatRelativeTime(date, 'en')} - ${originalText}`
 					: originalText;
 
-				timeElement.setAttribute('dir', 'ltr');
+				setTextContentIfChanged(timeElement, localizedText);
+				setAttributeIfChanged(timeElement, 'dir', 'ltr');
 			});
 	}
 
@@ -468,12 +567,12 @@ class Plugin {
 		const originalText = timeElement.dataset.mmRtlPersianOriginalText;
 
 		if (originalText) {
-			timeElement.textContent = originalText;
+			setTextContentIfChanged(timeElement, originalText);
 		}
 
 		delete timeElement.dataset.mmRtlPersianOriginalText;
 		delete timeElement.dataset.mmRtlPersianLocalized;
-		timeElement.removeAttribute('dir');
+		removeAttributeIfPresent(timeElement, 'dir');
 	}
 
 	private restoreTimestamps() {
