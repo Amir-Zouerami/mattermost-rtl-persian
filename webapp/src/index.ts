@@ -59,12 +59,25 @@ const BLOCK_DIRECTION_TARGETS = [
 	'.post-message__text > p',
 	'.post-message__text > ul.markdown__list',
 	'.post-message__text > ol.markdown__list',
-	'.post-message__text li',
 	'.post-message__text blockquote',
 	'.post-message__text blockquote p',
 	'.post-message__text .table-responsive',
 	'.post-message__text .markdown__table th',
 	'.post-message__text .markdown__table td',
+];
+
+const POST_DIRECTION_SCORE_TARGETS = [
+	'.post-message__text > h1',
+	'.post-message__text > h2',
+	'.post-message__text > h3',
+	'.post-message__text > h4',
+	'.post-message__text > h5',
+	'.post-message__text > h6',
+	'.post-message__text > p',
+	'.post-message__text > ul.markdown__list',
+	'.post-message__text > ol.markdown__list',
+	'.post-message__text > blockquote',
+	'.post-message__text > .table-responsive',
 ];
 
 const PERSIAN_DATE_PARTS_FORMATTER = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
@@ -226,6 +239,70 @@ function getTextDirection(text: string): TextDirection {
 	}
 
 	return stats.firstDirection;
+}
+
+function getWeightedPostDirection(messageText: HTMLElement): TextDirection {
+	let rtlScore = 0;
+	let ltrScore = 0;
+	let inheritedDirection: TextDirection = 'neutral';
+
+	messageText.querySelectorAll<HTMLElement>(POST_DIRECTION_SCORE_TARGETS.join(',')).forEach(element => {
+		if (element.closest('.post-message__text') !== messageText) {
+			return;
+		}
+
+		const trimmedText = getDirectionalText(element);
+
+		if (!trimmedText) {
+			return;
+		}
+
+		const ownDirection = getTextDirection(trimmedText);
+		const direction = ownDirection === 'neutral' ? inheritedDirection : ownDirection;
+
+		if (direction === 'neutral') {
+			return;
+		}
+
+		const weight = getPostDirectionWeight(element);
+
+		if (direction === 'rtl') {
+			rtlScore += weight;
+		} else {
+			ltrScore += weight;
+		}
+
+		if (ownDirection !== 'neutral') {
+			inheritedDirection = ownDirection;
+		}
+	});
+
+	if (rtlScore === 0 && ltrScore === 0) {
+		return getTextDirection(getDirectionalText(messageText));
+	}
+
+	if (rtlScore >= ltrScore) {
+		return 'rtl';
+	}
+
+	return 'ltr';
+}
+
+function getPostDirectionWeight(element: HTMLElement) {
+	if (element.matches('ol.markdown__list, ul.markdown__list')) {
+		const directListItems = element.querySelectorAll(':scope > li').length;
+		return Math.max(1, Math.min(4, directListItems));
+	}
+
+	if (element.matches('blockquote, .table-responsive')) {
+		return 2;
+	}
+
+	if (element.matches('h1, h2, h3')) {
+		return 1.25;
+	}
+
+	return 1;
 }
 
 function hasRtlStrongText(text: string) {
@@ -464,7 +541,7 @@ class Plugin {
 				return;
 			}
 
-			const direction = getTextDirection(trimmedText);
+			const direction = messageText ? getWeightedPostDirection(messageText) : getTextDirection(trimmedText);
 			const hasRtl = hasRtlStrongText(trimmedText);
 			const isNeutral = !hasRtl && !hasLetter(trimmedText);
 
@@ -476,17 +553,61 @@ class Plugin {
 	}
 
 	private classifyDirectionalBlocks() {
-		document.querySelectorAll<HTMLElement>(BLOCK_DIRECTION_TARGETS.join(',')).forEach(element => {
-			const trimmedText = getDirectionalText(element);
-			const direction = getTextDirection(trimmedText);
-			const cached = directionCache.get(element);
+		document.querySelectorAll<HTMLElement>('.post-message__text').forEach(messageText => {
+			this.clearListItemDirectionalState(messageText);
 
-			if (cached?.text === trimmedText && cached.direction === direction && hasExpectedDirectionalState(element, direction)) {
+			let inheritedDirection: TextDirection = 'neutral';
+
+			messageText.querySelectorAll<HTMLElement>(BLOCK_DIRECTION_TARGETS.join(',')).forEach(element => {
+				if (element.closest('.post-message__text') !== messageText) {
+					return;
+				}
+
+				const trimmedText = getDirectionalText(element);
+				const ownDirection = getTextDirection(trimmedText);
+				const direction = trimmedText && ownDirection === 'neutral' ? inheritedDirection : ownDirection;
+				const cached = directionCache.get(element);
+
+				if (cached?.text === trimmedText && cached.direction === direction && hasExpectedDirectionalState(element, direction)) {
+					if (direction !== 'neutral') {
+						inheritedDirection = direction;
+					}
+
+					return;
+				}
+
+				directionCache.set(element, {text: trimmedText, direction});
+				setDirectionalClass(element, direction);
+
+				if (direction !== 'neutral') {
+					inheritedDirection = direction;
+				}
+			});
+		});
+	}
+
+	private clearListItemDirectionalState(messageText: HTMLElement) {
+		messageText.querySelectorAll<HTMLElement>('ol.markdown__list > li, ul.markdown__list > li').forEach(listItem => {
+			const hadGeneratedDirectionClass =
+				listItem.classList.contains('mm-rtl-persian-rtl-block') ||
+				listItem.classList.contains('mm-rtl-persian-ltr-block') ||
+				listItem.classList.contains('mm-rtl-persian-neutral-block');
+
+			if (!hadGeneratedDirectionClass) {
 				return;
 			}
 
-			directionCache.set(element, {text: trimmedText, direction});
-			setDirectionalClass(element, direction);
+			removeClassIfPresent(listItem, 'mm-rtl-persian-rtl-block');
+			removeClassIfPresent(listItem, 'mm-rtl-persian-ltr-block');
+			removeClassIfPresent(listItem, 'mm-rtl-persian-neutral-block');
+
+			const dir = listItem.getAttribute('dir');
+
+			if (dir === 'rtl' || dir === 'ltr') {
+				removeAttributeIfPresent(listItem, 'dir');
+			}
+
+			directionCache.delete(listItem);
 		});
 	}
 

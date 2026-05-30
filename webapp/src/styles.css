@@ -123,6 +123,7 @@ body.mm-rtl-persian-enabled .post.mm-rtl-persian-neutral-post .post-message__tex
 	unicode-bidi: isolate !important;
 }
 
+
 body.mm-rtl-persian-enabled .post .post-message__text .mm-rtl-persian-rtl-block,
 body.mm-rtl-persian-enabled .post.mm-rtl-persian-ltr-post .post-message__text .mm-rtl-persian-rtl-block {
 	direction: rtl !important;
@@ -190,6 +191,7 @@ body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ul > l
 	padding-left: 0 !important;
 }
 
+
 body.mm-rtl-persian-enabled .post .post-message__text ul.markdown__list.mm-rtl-persian-rtl-block,
 body.mm-rtl-persian-enabled .post .post-message__text ul.mm-rtl-persian-rtl-block {
 	list-style-type: disc !important;
@@ -222,11 +224,38 @@ body.mm-rtl-persian-enabled .post .post-message__text ul.mm-rtl-persian-ltr-bloc
 	padding-left: 0 !important;
 }
 
-/* Explicitly leave ordered lists to Mattermost. */
-body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ol,
-body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ol > li,
-body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ol > li::before {
-	list-style: revert;
+/* Direction-aware ordered Markdown lists.
+ * Keep Mattermost's own ordered-list counter/table-cell layout intact.
+ * The previous absolute-positioned marker override was visually wrong in RTL:
+ * it forced the decimal separator onto the wrong side of the number.
+ * Only the list container gets direction/alignment here; list items inherit it.
+ */
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list.mm-rtl-persian-rtl-block,
+body.mm-rtl-persian-enabled .post .post-message__text ol.mm-rtl-persian-rtl-block {
+	direction: rtl !important;
+	text-align: right !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list.mm-rtl-persian-ltr-block,
+body.mm-rtl-persian-enabled .post .post-message__text ol.mm-rtl-persian-ltr-block {
+	direction: ltr !important;
+	text-align: left !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list.mm-rtl-persian-rtl-block > li,
+body.mm-rtl-persian-enabled .post .post-message__text ol.mm-rtl-persian-rtl-block > li {
+	direction: inherit !important;
+	text-align: inherit !important;
+	unicode-bidi: plaintext !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list.mm-rtl-persian-ltr-block > li,
+body.mm-rtl-persian-enabled .post .post-message__text ol.mm-rtl-persian-ltr-block > li {
+	direction: inherit !important;
+	text-align: inherit !important;
+	unicode-bidi: plaintext !important;
 }
 
 body.mm-rtl-persian-enabled .post.mm-rtl-persian-post blockquote,
@@ -238,6 +267,7 @@ body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text blockq
 	unicode-bidi: plaintext !important;
 	padding-right: 12px !important;
 }
+
 
 body.mm-rtl-persian-enabled .post .post-message__text blockquote.mm-rtl-persian-rtl-block {
 	border-left: 0 !important;
@@ -319,13 +349,47 @@ body.mm-rtl-persian-enabled.focalboard-body code {
 	line-height: 1.45 !important;
 }
 
-ol.markdown__list > li::before {
-	display: table-cell;
+/*
+ * Ordered-list marker repair.
+ *
+ * Mattermost renders ordered-list numbers through a generated ::before counter.
+ * The marker text must follow the list direction: RTL lists need an RTL marker
+ * context, while LTR lists need an LTR marker context. A single global marker
+ * direction fixes one side and breaks the other, so keep this direction-aware.
+ *
+ * Keep Mattermost's table-cell counter layout intact. This only makes sure
+ * ordered lists remain ordered and that the decimal separator stays on the
+ * correct visual side for each list direction.
+ */
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list {
+	list-style-type: none !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list > li {
+	display: table-row !important;
+	list-style-type: none !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list > li::before {
+	display: table-cell !important;
 	padding-right: 8px;
 	padding-left: 5px;
-	content: counter(list) '.';
+	content: counter(list) '.' !important;
 	text-align: right;
+	white-space: nowrap !important;
 	word-break: keep-all;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list.mm-rtl-persian-rtl-block > li::before,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-post .post-message__text ol.markdown__list:not(.mm-rtl-persian-ltr-block) > li::before {
+	direction: rtl !important;
+	unicode-bidi: isolate !important;
+}
+
+body.mm-rtl-persian-enabled .post .post-message__text ol.markdown__list.mm-rtl-persian-ltr-block > li::before,
+body.mm-rtl-persian-enabled .post.mm-rtl-persian-ltr-post .post-message__text ol.markdown__list:not(.mm-rtl-persian-rtl-block) > li::before {
+	direction: ltr !important;
+	unicode-bidi: isolate !important;
 }
 
 form#create_post {
