@@ -47,6 +47,21 @@ const DIRECTION_TARGETS = [
 	'.focalboard-body .MarkdownEditor',
 	'.focalboard-body .comment-markdown',
 	'.focalboard-body .comment-markdown p',
+
+	'.Kanban .octo-titletext',
+	'.Kanban .Label',
+	'.Kanban .Label-text',
+	'.Kanban .Editable',
+	'.Kanban .octo-propertyvalue',
+	'.Kanban .Person-item',
+	'.Kanban .Button span',
+	'.octo-board-header .Label',
+	'.octo-board-header .Label-text',
+	'.octo-board-header .Editable',
+	'.octo-board-body .octo-titletext',
+	'.octo-board-body .Label',
+	'.octo-board-body .Label-text',
+	'.octo-board-body .octo-propertyvalue',
 ];
 
 const BLOCK_DIRECTION_TARGETS = [

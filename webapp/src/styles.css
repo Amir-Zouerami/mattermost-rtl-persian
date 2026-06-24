@@ -37,7 +37,35 @@ body.mm-rtl-persian-enabled.focalboard-body textarea,
 body.mm-rtl-persian-enabled.focalboard-body input.Editable,
 body.mm-rtl-persian-enabled.focalboard-body .MarkdownEditor,
 body.mm-rtl-persian-enabled.focalboard-body .octo-editor-preview,
-body.mm-rtl-persian-enabled.focalboard-body .comment-markdown {
+body.mm-rtl-persian-enabled.focalboard-body .comment-markdown,
+body.mm-rtl-persian-enabled .focalboard-body .Editable,
+body.mm-rtl-persian-enabled .focalboard-body textarea,
+body.mm-rtl-persian-enabled .focalboard-body input.Editable,
+body.mm-rtl-persian-enabled .focalboard-body .MarkdownEditor,
+body.mm-rtl-persian-enabled .focalboard-body .octo-editor-preview,
+body.mm-rtl-persian-enabled .focalboard-body .comment-markdown,
+body.mm-rtl-persian-enabled .Kanban,
+body.mm-rtl-persian-enabled .Kanban .Editable,
+body.mm-rtl-persian-enabled .Kanban .Button,
+body.mm-rtl-persian-enabled .Kanban .Label,
+body.mm-rtl-persian-enabled .Kanban .Label-text,
+body.mm-rtl-persian-enabled .Kanban .octo-titletext,
+body.mm-rtl-persian-enabled .Kanban .octo-propertyvalue,
+body.mm-rtl-persian-enabled .Kanban .Person,
+body.mm-rtl-persian-enabled .Kanban .Person-item,
+body.mm-rtl-persian-enabled .octo-board-header,
+body.mm-rtl-persian-enabled .octo-board-body,
+body.mm-rtl-persian-enabled .octo-board-header .Editable,
+body.mm-rtl-persian-enabled .octo-board-header .Button,
+body.mm-rtl-persian-enabled .octo-board-header .Label,
+body.mm-rtl-persian-enabled .octo-board-header .Label-text,
+body.mm-rtl-persian-enabled .octo-board-body .Button,
+body.mm-rtl-persian-enabled .octo-board-body .Label,
+body.mm-rtl-persian-enabled .octo-board-body .Label-text,
+body.mm-rtl-persian-enabled .octo-board-body .octo-titletext,
+body.mm-rtl-persian-enabled .octo-board-body .octo-propertyvalue,
+body.mm-rtl-persian-enabled .octo-board-body .Person,
+body.mm-rtl-persian-enabled .octo-board-body .Person-item {
 	font-family: var(--mm-rtl-persian-font-family);
 }
 
@@ -335,14 +363,47 @@ body.mm-rtl-persian-enabled.focalboard-body .octo-editor-preview,
 body.mm-rtl-persian-enabled.focalboard-body .octo-editor-preview p,
 body.mm-rtl-persian-enabled.focalboard-body .MarkdownEditor,
 body.mm-rtl-persian-enabled.focalboard-body .comment-markdown,
-body.mm-rtl-persian-enabled.focalboard-body .comment-markdown p {
+body.mm-rtl-persian-enabled.focalboard-body .comment-markdown p,
+body.mm-rtl-persian-enabled .focalboard-body .Editable,
+body.mm-rtl-persian-enabled .focalboard-body textarea,
+body.mm-rtl-persian-enabled .focalboard-body input.Editable,
+body.mm-rtl-persian-enabled .focalboard-body .octo-editor-preview,
+body.mm-rtl-persian-enabled .focalboard-body .octo-editor-preview p,
+body.mm-rtl-persian-enabled .focalboard-body .MarkdownEditor,
+body.mm-rtl-persian-enabled .focalboard-body .comment-markdown,
+body.mm-rtl-persian-enabled .focalboard-body .comment-markdown p {
 	unicode-bidi: plaintext;
 	text-align: start;
 	line-height: 2 !important;
 }
 
+body.mm-rtl-persian-enabled .Kanban .octo-titletext,
+body.mm-rtl-persian-enabled .Kanban .Label,
+body.mm-rtl-persian-enabled .Kanban .Label-text,
+body.mm-rtl-persian-enabled .Kanban .Editable,
+body.mm-rtl-persian-enabled .Kanban .octo-propertyvalue,
+body.mm-rtl-persian-enabled .Kanban .Person-item,
+body.mm-rtl-persian-enabled .Kanban .Button span,
+body.mm-rtl-persian-enabled .octo-board-header .Label,
+body.mm-rtl-persian-enabled .octo-board-header .Label-text,
+body.mm-rtl-persian-enabled .octo-board-header .Editable,
+body.mm-rtl-persian-enabled .octo-board-header .Button span,
+body.mm-rtl-persian-enabled .octo-board-body .octo-titletext,
+body.mm-rtl-persian-enabled .octo-board-body .Label,
+body.mm-rtl-persian-enabled .octo-board-body .Label-text,
+body.mm-rtl-persian-enabled .octo-board-body .octo-propertyvalue,
+body.mm-rtl-persian-enabled .octo-board-body .Person-item,
+body.mm-rtl-persian-enabled .octo-board-body .Button span {
+	unicode-bidi: plaintext !important;
+	text-align: start !important;
+}
+
 body.mm-rtl-persian-enabled.focalboard-body pre,
-body.mm-rtl-persian-enabled.focalboard-body code {
+body.mm-rtl-persian-enabled.focalboard-body code,
+body.mm-rtl-persian-enabled .focalboard-body pre,
+body.mm-rtl-persian-enabled .focalboard-body code,
+body.mm-rtl-persian-enabled .Kanban pre,
+body.mm-rtl-persian-enabled .Kanban code {
 	direction: ltr !important;
 	text-align: left !important;
 	unicode-bidi: isolate !important;
